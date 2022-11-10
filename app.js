@@ -2,7 +2,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-
+const _ = require("lodash");
 
 const app = express();
 
@@ -43,7 +43,7 @@ const listSchema = {
   items: [itemsSchema]
 };
 
-const List = mongoose.model("List", listSchema)
+const List = mongoose.model("List", listSchema);  
 
 app.get("/", function(req, res) {
   
@@ -51,7 +51,7 @@ app.get("/", function(req, res) {
   Item.find({}, function(err, foundItems) {
     
     if (foundItems.length === 0) {
-      //Insert items into "Item" module where (1)first parameter is document array (2) function which deals with error if exists
+      //Insert items into "Item" module where (1)first parameter is document of array(2) function which deals with error if exists
       Item.insertMany(defaultItems, function(err) {
       if (err) {
         console.log(err)
@@ -70,13 +70,23 @@ app.get("/", function(req, res) {
 app.post("/", function(req, res){
 
   const itemName = req.body.newItem;
+  const listName = req.body.list;
+
   const  item = new Item({
     name: itemName
   });
 
-  item.save();
-
-  res.redirect("/");
+  //listName stores submitted button. If it is not "Today" then findOne and push the new item into "items" array
+  if(listName === "Today") {
+    item.save();
+    res.redirect("/");
+  } else {
+    List.findOne({name: listName}, function(err, foundList) {
+      foundList.items.push(item);
+      foundList.save();
+      res.redirect("/" + listName);
+    })
+  }
 });
 
 //Creating a new post method to delete items as a post request when checked as input from "list.ejs"
@@ -84,19 +94,29 @@ app.post("/delete", function(req, res) {
 
   //Recieves "checkbox" using req.body.checkbox and stores it into checkedItemId.
   const checkedItemId = req.body.checkbox;
+  const listName = req.body.listName;
 
+  if (listName === "Today") {
   //Once the id is recieved Find it by id and remove it from "Item" collection (1)Pass the Id (2)Callback function which is mandatory. And after it is checked redirect to the Home Page
   Item.findByIdAndRemove(checkedItemId, function(err) {
     if(!err) {
       console.log("Successfully deleted checked item.");
       res.redirect("/")
     }
-  })
+  });
+  } else {
+    List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItemId}}}, function(err, foundList) {
+      if(!err) {
+        res.redirect("/" +listName);
+      }
+    })
+  }
 });
 
 app.get("/:customListName", function(req, res) {
-  const customListName = req.params.customListName;
+  const customListName = _.capitalize(req.params.customListName);
   
+  //findOne method returns an object. Coz it only returns a single document or object so we cant used arrays properties  
   List.findOne({name: customListName }, function(err, foundList) {
     if (!err) {
       if (!foundList){
@@ -105,7 +125,6 @@ app.get("/:customListName", function(req, res) {
           name: customListName,
           items: defaultItems
         });
-        
         list.save();
         res.redirect("/" +customListName);
       } else {
