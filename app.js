@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
 // Create a connection from localhost and create a new database called as "todolistDB".
-mongoose.connect("mongodb://localhost:27017/todolistDB", {useNewUrlparser: true})
+mongoose.connect("mongodb+srv://Abdul:jabbar1234567890@cluster0.rnzl6gg.mongodb.net/todolistDB", {useNewUrlparser: true})
 
 //Create a new Schema and specify "name" and the type of "data" which is String here
 const itemsSchema = {
