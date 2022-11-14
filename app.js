@@ -143,11 +143,7 @@ app.get("/about", function(req, res){
   res.render("about");
 });
 
-let port = process.env.PORT;
-if (port == null || port == "") {
-  port = 8000;
-}
 
-app.listen(port, function() {
+app.listen(3000, function() {
   console.log("Server has Started Successfully");
 });
