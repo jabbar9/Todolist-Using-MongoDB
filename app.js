@@ -69,6 +69,7 @@ app.get("/", function(req, res) {
 
 app.post("/", function(req, res){
 
+  //In itemName new item is created at root route but in listName "listTitle" is recieved.
   const itemName = req.body.newItem;
   const listName = req.body.list;
 
@@ -93,6 +94,7 @@ app.post("/", function(req, res){
 app.post("/delete", function(req, res) {
 
   //Recieves "checkbox" using req.body.checkbox and stores it into checkedItemId.
+  //In listname List title is also recieved
   const checkedItemId = req.body.checkbox;
   const listName = req.body.listName;
 
