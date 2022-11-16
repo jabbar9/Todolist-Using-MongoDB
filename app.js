@@ -14,7 +14,7 @@ app.use(express.static("public"));
 // Create a connection from localhost and create a new database called as "todolistDB".
 mongoose.connect("mongodb+srv://Abdul:jabbar1234567890@cluster0.rnzl6gg.mongodb.net/todolistDB", {useNewUrlparser: true})
 
-//Create a new Schema and specify "name" and the type of "data" which is String here
+//Create a new Schema and specify "Fieldname" and the type of "data" which is String here
 const itemsSchema = {
   name: String
 };
@@ -69,7 +69,7 @@ app.get("/", function(req, res) {
 
 app.post("/", function(req, res){
 
-  //In itemName new item is created at root route but in listName "listTitle" is recieved.
+  //In itemName new item is created at root route but in listName button is submitted.
   const itemName = req.body.newItem;
   const listName = req.body.list;
 
@@ -136,10 +136,6 @@ app.get("/:customListName", function(req, res) {
     }
   })  
 })
-
-// app.get("/work", function(req,res){
-//   res.render("list", {listTitle: "Work List", newListItems: workItems});
-// });
 
 app.get("/about", function(req, res){
   res.render("about");
